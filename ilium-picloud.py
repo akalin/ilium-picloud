@@ -2,7 +2,9 @@ import argparse
 import cloud
 import io
 from os import path
+import random
 import re
+import string
 import subprocess
 import sys
 
@@ -39,8 +41,11 @@ def main():
         args.t = 'f2'
 
     config_basename = path.basename(args.config_path)
-    # TODO(akalin): Append random string.
-    job_id = path.splitext(config_basename)[0]
+    random_suffix_size = 6
+    random_suffix_chars = string.ascii_lowercase + string.digits
+    random_suffix = ''.join(random.choice(random_suffix_chars)
+                            for x in xrange(random_suffix_size))
+    job_id = path.splitext(config_basename)[0] + '.' + random_suffix
     prefix = job_id + '/'
     bucket_dir = path.join('/bucket', prefix)
     bucket_config_path = path.join(bucket_dir, config_basename)
@@ -50,8 +55,8 @@ def main():
 
     cloud.bucket.put(args.config_path, config_basename, prefix=prefix)
 
-    print 'calling into PiCloud with %d jobs and %d cores...' % (
-        args.j, args.c)
+    print 'calling into PiCloud for job %s with %d jobs and %d cores...' % (
+        job_id, args.j, args.c)
     jids = cloud.map(run_ilium_for_job, xrange(0, args.j),
                      _env='ilium', _type=args.t, _cores=args.c,
                      _label='run_ilium(%s)' % job_id)
