@@ -24,6 +24,7 @@ def main():
     parser.add_argument('-j', type=int, help='the number of jobs to use')
     parser.add_argument('-c', type=int,
                         help='the number of cores per job to use')
+    parser.add_argument('-t', help='the core type to use')
     parser.add_argument('config_path',
                         help='the path to the ilium config to use')
     args = parser.parse_args()
@@ -33,6 +34,9 @@ def main():
 
     if args.c < 1:
         args.c = 4
+
+    if not args.t:
+        args.t = 'f2'
 
     config_basename = path.basename(args.config_path)
     # TODO(akalin): Append random string.
@@ -49,7 +53,7 @@ def main():
     print 'calling into PiCloud with %d jobs and %d cores...' % (
         args.j, args.c)
     jids = cloud.map(run_ilium_for_job, xrange(0, args.j),
-                     _env='ilium', _type='f2', _cores=args.c,
+                     _env='ilium', _type=args.t, _cores=args.c,
                      _label='run_ilium(%s)' % job_id)
 
     remaining_jobs = len(jids)
