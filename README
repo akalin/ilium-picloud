@@ -1,0 +1,9 @@
+Ilium-picloud contains scripts to run Ilium (a physically-based
+rendering system written in Go) on PiCloud.
+
+To run on PiCloud (assuming everything is set up correctly):
+
+python ilium-picloud.py /path/to/scene.json
+
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
